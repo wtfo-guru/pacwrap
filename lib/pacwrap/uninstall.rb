@@ -3,21 +3,21 @@
 require 'pacwrap/manager'
 
 module Pacwrap
-  # @class Install
-  class Install < Manager
+  # @class Uninstall
+  class Uninstall < Manager
     def execute(package)
       @logger.debug "Install.execute(#{package}) called."
       family = osfamily
       command = case family
                 when 'Archlinux'
-                  "sudo pacman -Ss '#{package}'"
+                  "sudo pacman -R '#{package}'"
                 when 'RedHat'
                   pkgmgr = os_package_manager
-                  "sudo #{pkgmgr} install '#{package}'"
+                  "sudo #{pkgmgr} remove '#{package}'"
                 when 'Debian'
-                  "sudo apt install '#{package}'"
+                  "sudo apt remove '#{package}'"
                 else
-                  raise "Install not supported for family: #{family}" # TODO: create custom Exception
+                  raise "Uninstall not supported for family: #{family}" # TODO: create custom Exception
                 end
       run(command)
     end

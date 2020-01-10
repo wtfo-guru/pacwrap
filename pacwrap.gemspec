@@ -38,6 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 0.74'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.35'
 
+  spec.add_runtime_dependency 'facter'
   spec.add_runtime_dependency 'logging'
   spec.add_runtime_dependency 'thor'
 end

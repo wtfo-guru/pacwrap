@@ -4,7 +4,7 @@ I started working with Linux many years ago primarily with systems of the RedHat
 family. I gave Gentoo a short test drive and still have one Gentoo device active.
 When I decided to abandon Windows as my primary laptop/desktop operating system,
 I chose Ubuntu because it was a much easier to get a nice look and feel mostly
-due to proprietary software not pre-package with Fedora. Sometime in the past
+due to proprietary software not pre-packaged with Fedora. Sometime in the past
 year I moved on to Manjaro an Arch Linux derivative as my primary laptop/desktop.
 I like Arch.
 

@@ -4,25 +4,43 @@ require 'logging'
 require 'thor'
 
 # sub commands
-require 'pacwrap/list'
+# require 'pacwrap/list'
 
 module Pacwrap
   # @class CLI
   class CLI < Thor
+    class_option :debug, :type => :boolean, :aliases => '-d', :default => false
+    class_option :verbose, :type => :boolean, :aliases => '-v', :default => false
 
-    desc 'file fullpathname', 'Determines package if any that include the file defined by fullpathname'
+    desc 'file FILE', 'Displays package if any that include the FILE'
     def file(fullpathname)
       require 'pacwrap/file'
-      Pacwrap::File.new.execute(fullpathname)
+      Pacwrap::File.new(options).execute(fullpathname)
     end
 
-    desc 'install package', 'Install a package'
+    desc 'install PACKAGE', 'Installs PACKAGE'
     def install(package)
       require 'pacwrap/install'
-      Pacwrap::File.new.execute(package)
+      Pacwrap::Install.new(options).execute(package)
     end
 
-    desc 'list', 'Lists files in package or packages'
-    subcommand 'list', List
+    desc 'uninstall PACKAGE', 'Unistalls PACKAGE'
+    def uninstall(uninstall)
+      require 'pacwrap/install'
+      Pacwrap::Uninstall.new(options).execute(package)
+    end
+
+    desc 'list [PACKAGE]', 'Lists files in PACKAGE or installed packages when no PACKAGE specified'
+    # subcommand 'list', List
+    def list(package = nil)
+      require 'pacwrap/list'
+      Pacwrap::List.new(options).execute(package)
+    end
+
+    desc 'find PACKAGE', 'Searches repositories for PACKAGE'
+    def find(package)
+      require 'pacwrap/find'
+      Pacwrap::Find.new(options).execute(package)
+    end
   end
 end

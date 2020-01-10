@@ -1,20 +1,46 @@
 # frozen_string_literal: true
 
-require 'pacwrap/subs'
+require 'pacwrap/manager'
 
 module Pacwrap
-  # @class CLI
-  class List < SubCommandBase
-    desc 'files', 'Lists files in package'
-    def files(package)
-      require 'pacwrap/list/files'
-      Pacwrap::Files.new.execute(package)
+  # @class List
+  class List < Manager
+    def execute(package)
+      @logger.debug "Find.execute(#{package}) called."
+      return packages unless package.nil?
+
+      family = osfamily
+      command = case family
+                when 'Archlinux'
+                  "pacman -Ql '#{package}'"
+                when 'RedHat'
+                  pkgmgr = os_package_manager
+                  "#{pkgmgr} -ql '#{package}'" # TODO: verbose?
+                when 'Debian'
+                  "dpkg -L '#{package}'" # TODO: --names-only
+                else
+                  raise "List package not supported for family: #{family}" # TODO: create custom Exception?
+                end
+      run(command)
     end
 
-    desc 'packages', 'Lists installed packages'
     def packages
-      require 'pacwrap/list/packages'
-      Pacwrap::Packages.new.execute
+      @logger.debug 'Find.packages()) called.'
+
+      family = osfamily
+      command = case family
+                when 'Archlinux'
+                  'pacman -Qe'
+                when 'RedHat'
+                  "rpm -qa --qf '%{name}-%{version}-%{release}.%{arch}.rpm\\n' | sort"
+                when 'Debian'
+                  'apt list --installed | sort'
+                when 'Gentoo'
+                  'qlist -Iv'
+                else
+                  raise "List packages not supported for family: #{family}" # TODO: create custom Exception?
+                end
+      run(command)
     end
   end
 end

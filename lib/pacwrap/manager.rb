@@ -5,10 +5,17 @@ require 'facter'
 module Pacwrap
   # @class manage
   class Manager
-    def initialize
+    def initialize(options)
       #    Logging.init :debug, :info, :warn, :error, :fatal
+      @options = options
       @logger = Logging.logger['pacwrap']
-      @logger.level = :debug
+      @logger.level = if options[:debug]
+                        :debug
+                      elsif options[:verbose]
+                        :info
+                      else
+                        :warn
+                      end
       @logger.add_appenders(Logging.appenders.stdout)
     end
 
@@ -56,6 +63,48 @@ module Pacwrap
       @osfamily ||= os_release_to_family
       # Factor is slow so our last resort
       @osfamily ||= Facter.value(:osfamily)
+    end
+
+    def refresh_package_lists
+      @logger.debug 'method refresh_package_lists no implemented yet!'
+      # typeset FLAG=/var/tmp/packages.refreshed.by.${IAM}
+      # typeset LAST NOW ELAPSED
+      # if [ -e "$FLAG" ]
+      # then
+      #   LAST=$(date -r "$FLAG" '+%S')
+      #   NOW=$(date '+%S')
+      #   ELAPSED=$((NOW-LAST))
+      # else
+      #   ELAPSED=$((86400*14))
+      # fi
+      # if [ $ELAPSED -gt 86400 ]
+      # then
+      #   touch "$FLAG"
+      #   # refresh the package list
+      #   case "$ID_LIKE" in
+      #     arch )
+      #       case "$ID" in
+      #         manjaro )
+      #           LAST=$((86400*14))
+      #           if [ $ELAPSED -ge $MAX ]
+      #           then
+      #             sudo pacman-mirrors -c United_States
+      #           fi
+      #         ;;
+      #         * )
+      #         ;;
+      #       esac
+      #     ;;
+      #     debian )
+      #       sudo apt-update
+      #     ;;
+      #     gentoo )
+      #       sudo emerge-websync
+      #     ;;
+      #     * )
+      #     ;;
+      #   esac
+      # fi
     end
 
     def os_package_manager
