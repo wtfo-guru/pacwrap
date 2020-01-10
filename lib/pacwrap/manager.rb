@@ -8,10 +8,21 @@ module Pacwrap
     def initialize(options)
       #    Logging.init :debug, :info, :warn, :error, :fatal
       @options = options
+
+      if @options.key?('test')
+        os_list = %w{Debian Gentoo RedHat Archlinux}
+        # TODO: implement case insensitivity
+        unless os_list.include?(@options['test'])
+          valid = os_list.join(' ')
+          raise "Invalid osfamily #{@options['test']}, not one of (#{valid})"
+        end
+        @osfamily = @options['test']
+      end
+
       @logger = Logging.logger['pacwrap']
-      @logger.level = if options[:debug]
+      @logger.level = if options['debug']
                         :debug
-                      elsif options[:verbose]
+                      elsif options['verbose'] || @options.key?('test')
                         :info
                       else
                         :warn
@@ -20,8 +31,13 @@ module Pacwrap
     end
 
     def run(command)
-      system(command)
-      $CHILD_STATUS
+      if @options.key?('test')
+        @logger.info "[noex] \"#{command}\""
+        10
+      else
+        system(command)
+        $CHILD_STATUS
+      end
     end
 
     def os_id
@@ -52,7 +68,7 @@ module Pacwrap
       @osrelease ||= load_properties('/etc/os-release')
       @osfamily ||= os_like if @osrelease.key?('ID_LIKE')
       @osfamily ||= os_id if @osrelease.key?('ID')
-    rescue
+    rescue StandardError => e
       @osrelease = {}
       @osfamily
     end
@@ -107,16 +123,30 @@ module Pacwrap
       # fi
     end
 
+    # Cross-platform way of finding an executable in the $PATH.
+    #
+    #   which('ruby') #=> /usr/bin/ruby
+    def which(cmd)
+      exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
+      ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+        exts.each { |ext|
+          exe = File.join(path, "#{cmd}#{ext}")
+          return exe if File.executable?(exe) && !File.directory?(exe)
+        }
+      end
+      return nil
+    end
+
     def os_package_manager
       case osfamily
       when 'Archlinux'
         'pacman'
       when 'RedHat'
-        dnf = %x(which dnf)
-        if $CHILD_STATUS.zero?
-          'dnf'
-        else
+        dnf = which 'dnf'
+        if dnf.nil?
           'yum'
+        else
+          'dnf'
         end
       when 'Debian'
         'apt'

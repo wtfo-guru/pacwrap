@@ -7,4 +7,8 @@
 require 'bundler/setup'
 require 'pacwrap/cli'
 
-Pacwrap::CLI.start
+begin
+  Pacwrap::CLI.start
+rescue RuntimeError => e
+  warn "ERROR: #{e.message}"
+end

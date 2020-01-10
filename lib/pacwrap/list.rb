@@ -7,7 +7,7 @@ module Pacwrap
   class List < Manager
     def execute(package)
       @logger.debug "Find.execute(#{package}) called."
-      return packages unless package.nil?
+      return packages if package.nil?
 
       family = osfamily
       command = case family

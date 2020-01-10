@@ -11,6 +11,7 @@ module Pacwrap
   class CLI < Thor
     class_option :debug, :type => :boolean, :aliases => '-d', :default => false
     class_option :verbose, :type => :boolean, :aliases => '-v', :default => false
+    class_option :test, :type => :string, :aliases => '-t'
 
     desc 'file FILE', 'Displays package if any that include the FILE'
     def file(fullpathname)

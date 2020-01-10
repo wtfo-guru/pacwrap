@@ -1,11 +1,20 @@
 # frozen_string_literal: true
 
+require 'logging'
 require 'pacwrap/manager'
 
-package = 'Broccoli'
+package = 'ruby'
 
 RSpec.describe Pacwrap::Manager do
-  it 'broccoli installs' do
-    expect(Pacwrap::Manager.install(package)).to eql(package)
+  let(:manager) {
+    described_class.new(
+      'test' => 'Archlinux',
+      'debug' => false,
+      'verbose' => false
+    )
+  }
+
+  it 'runs command' do
+    expect(manager.run 'wtfo rover').to eql(10)
   end
 end
