@@ -8,7 +8,7 @@ module Pacwrap
     def initialize(options)
       #    Logging.init :debug, :info, :warn, :error, :fatal
       @options = options
-
+      # pp 'options: ', options
       if @options.key?('test')
         os_list = %w{Debian Gentoo RedHat Archlinux}
         # TODO: implement case insensitivity
@@ -123,26 +123,12 @@ module Pacwrap
       # fi
     end
 
-    # Cross-platform way of finding an executable in the $PATH.
-    #
-    #   which('ruby') #=> /usr/bin/ruby
-    def which(cmd)
-      exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
-      ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
-        exts.each { |ext|
-          exe = File.join(path, "#{cmd}#{ext}")
-          return exe if File.executable?(exe) && !File.directory?(exe)
-        }
-      end
-      return nil
-    end
-
     def os_package_manager
       case osfamily
       when 'Archlinux'
         'pacman'
       when 'RedHat'
-        dnf = which 'dnf'
+        dnf = Pacwrap.which 'dnf'
         if dnf.nil?
           'yum'
         else

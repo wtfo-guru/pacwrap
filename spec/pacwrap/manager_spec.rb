@@ -15,6 +15,6 @@ RSpec.describe Pacwrap::Manager do
   }
 
   it 'runs command' do
-    expect(manager.run 'wtfo rover').to eql(10)
+    expect(manager.run('wtfo rover')).to eql(10)
   end
 end

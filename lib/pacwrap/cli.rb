@@ -16,7 +16,7 @@ module Pacwrap
     desc 'file FILE', 'Displays package if any that include the FILE'
     def file(fullpathname)
       require 'pacwrap/file'
-      Pacwrap::File.new(options).execute(fullpathname)
+      Pacwrap::Ffile.new(options).execute(fullpathname)
     end
 
     desc 'install PACKAGE', 'Installs PACKAGE'
@@ -31,7 +31,9 @@ module Pacwrap
       Pacwrap::Uninstall.new(options).execute(package)
     end
 
-    desc 'list [PACKAGE]', 'Lists files in PACKAGE or installed packages when no PACKAGE specified'
+    desc 'list [PACKAGE]', 'Lists files in PACKAGE or installed packages when no PACKAGE specified.'
+    method_option :output, :aliases => ['-o', '--out'], :desc => 'Save output to specify file.'
+    method_option :quiet, :type => :boolean, :aliases => '-q', :desc => 'Suppress output to screen if -o.'
     # subcommand 'list', List
     def list(package = nil)
       require 'pacwrap/list'
