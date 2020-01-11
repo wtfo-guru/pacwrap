@@ -19,6 +19,12 @@ module Pacwrap
       Pacwrap::Ffile.new(options).execute(fullpathname)
     end
 
+    desc 'info PACKAGE', 'Display information about PACKAGE'
+    def info(package)
+      require 'pacwrap/info'
+      Pacwrap::Info.new(options).execute(package)
+    end
+
     desc 'install PACKAGE', 'Installs PACKAGE'
     def install(package)
       require 'pacwrap/install'
@@ -26,8 +32,8 @@ module Pacwrap
     end
 
     desc 'uninstall PACKAGE', 'Unistalls PACKAGE'
-    def uninstall(uninstall)
-      require 'pacwrap/install'
+    def uninstall(package)
+      require 'pacwrap/uninstall'
       Pacwrap::Uninstall.new(options).execute(package)
     end
 

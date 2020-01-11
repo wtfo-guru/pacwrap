@@ -1,5 +1,8 @@
-require "pacwrap/version"
+# frozen_string_literal: true
 
+require 'pacwrap/version'
+
+# @module Pacwrap
 module Pacwrap
   class Error < StandardError; end
   # Your code goes here...
@@ -10,10 +13,10 @@ module Pacwrap
   def self.which(cmd)
     exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
     ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
-      exts.each { |ext|
+      exts.each do |ext|
         exe = File.join(path, "#{cmd}#{ext}")
         return exe if File.executable?(exe) && !File.directory?(exe)
-      }
+      end
     end
     nil
   end

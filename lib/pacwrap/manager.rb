@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'logging'
 require 'facter'
 
 module Pacwrap
@@ -28,6 +29,8 @@ module Pacwrap
                         :warn
                       end
       @logger.add_appenders(Logging.appenders.stdout)
+      @refresh_flag = "/var/tmp/.pacwrap.refresh.flag.#{Process.uid}"
+      @refresh_threshold = 7200 # two hours
     end
 
     def run(command)
@@ -68,7 +71,7 @@ module Pacwrap
       @osrelease ||= load_properties('/etc/os-release')
       @osfamily ||= os_like if @osrelease.key?('ID_LIKE')
       @osfamily ||= os_id if @osrelease.key?('ID')
-    rescue StandardError => e
+    rescue StandardError => _e
       @osrelease = {}
       @osfamily
     end
@@ -81,46 +84,26 @@ module Pacwrap
       @osfamily ||= Facter.value(:osfamily)
     end
 
+    def refresh?
+      return true unless File.exist?(@refresh_flag)
+
+      age = Time.now.to_i - File.mtime(@refresh_flag).to_i
+      age.negative? || age > @refresh_threshold
+    end
+
     def refresh_package_lists
-      @logger.debug 'method refresh_package_lists no implemented yet!'
-      # typeset FLAG=/var/tmp/packages.refreshed.by.${IAM}
-      # typeset LAST NOW ELAPSED
-      # if [ -e "$FLAG" ]
-      # then
-      #   LAST=$(date -r "$FLAG" '+%S')
-      #   NOW=$(date '+%S')
-      #   ELAPSED=$((NOW-LAST))
-      # else
-      #   ELAPSED=$((86400*14))
-      # fi
-      # if [ $ELAPSED -gt 86400 ]
-      # then
-      #   touch "$FLAG"
-      #   # refresh the package list
-      #   case "$ID_LIKE" in
-      #     arch )
-      #       case "$ID" in
-      #         manjaro )
-      #           LAST=$((86400*14))
-      #           if [ $ELAPSED -ge $MAX ]
-      #           then
-      #             sudo pacman-mirrors -c United_States
-      #           fi
-      #         ;;
-      #         * )
-      #         ;;
-      #       esac
-      #     ;;
-      #     debian )
-      #       sudo apt-update
-      #     ;;
-      #     gentoo )
-      #       sudo emerge-websync
-      #     ;;
-      #     * )
-      #     ;;
-      #   esac
-      # fi
+      return unless refresh?
+
+      command = case osfamily
+                when 'Archlinux'
+                  'sudo pacman -Sy'
+                when 'Gentoo'
+                  'sudo emerge-websync'
+                when 'Debian'
+                  'sudo apt update'
+                end
+      run(command)
+      File.touch(@refresh_flag)
     end
 
     def os_package_manager
@@ -149,7 +132,7 @@ module Pacwrap
       File.open(properties_filename, 'r') do |properties_file|
         properties_file.read.each_line do |line|
           line.strip!
-          next unless (line[0] != ?# and line[0] != ?=)
+          next unless line[0] != '#' && line[0] != '='
 
           i = line.index('=')
           if i

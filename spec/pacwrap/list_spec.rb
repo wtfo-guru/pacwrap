@@ -7,31 +7,34 @@ supported = %w{Archlinux Debian RedHat Gentoo}
 unsupported = %w{}
 params = ['ruby', nil]
 
+def list_package_cmd(family, param)
+  case family
+  when 'Archlinux'
+    "pacman -Ql '#{param}'"
+  when 'RedHat'
+    "rpm -ql '#{param}'"
+  when 'Debian'
+    "dpkg -L '#{param}'"
+  when 'Gentoo'
+    "eqm -ql '#{param}'"
+  end
+end
+
+def list_all_cmd(family)
+  case family
+  when 'Archlinux'
+    'pacman -Qe'
+  when 'RedHat'
+    "rpm -qa --qf '%{name}-%{version}-%{release}.%{arch}.rpm\\n' | sort"
+  when 'Debian'
+    'apt list --installed | sort'
+  when 'Gentoo'
+    'qlist -IRv'
+  end
+end
 supported.each do |family|
   params.each do |param|
-    expec = if param.nil?
-              case family
-              when 'Archlinux'
-                'pacman -Qe'
-              when 'RedHat'
-                "rpm -qa --qf '%{name}-%{version}-%{release}.%{arch}.rpm\\n' | sort"
-              when 'Debian'
-                'apt list --installed | sort'
-              when 'Gentoo'
-                'qlist -IRv'
-              end
-            else
-              case family
-              when 'Archlinux'
-                "pacman -Ql '#{param}'"
-              when 'RedHat'
-                "rpm -ql '#{param}'"
-              when 'Debian'
-                "dpkg -L '#{param}'"
-              when 'Gentoo'
-                "eqm -ql '#{param}'"
-              end
-            end
+    expec = param.nil? ? list_all_cmd(family) : list_package_cmd(family, param)
 
     RSpec.describe Pacwrap::List do
       p = param.nil? ? 'nil' : param

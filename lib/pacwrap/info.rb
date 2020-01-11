@@ -3,12 +3,11 @@
 require 'pacwrap/manager'
 
 module Pacwrap
-  # @class Find
-  class Find < Manager
+  # @class Info
+  class Info < Manager
     def execute(package)
       @logger.debug "Find.execute(#{package}) called."
 
-      refresh_package_lists
       run(command(package))
     end
 
@@ -16,14 +15,13 @@ module Pacwrap
       family = osfamily
       case family
       when 'Archlinux'
-        "sudo pacman -Ssy '#{param}'"
+        "pacman -Qi '#{param}'"
       when 'RedHat'
-        pkgmgr = os_package_manager
-        "sudo #{pkgmgr} search '#{param}'" # TODO: verbose?
+        "rpm -qi '#{param}'"
       when 'Debian'
-        "sudo apt search '#{param}'" # TODO: --names-only
+        "apt-cache show '#{param}'"
       else
-        raise "Find not supported for family: #{family}" # TODO: create custom Exception?
+        raise "Info not supported for family: #{family}" # TODO: create custom Exception?
       end
     end
   end

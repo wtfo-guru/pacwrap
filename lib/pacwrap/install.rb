@@ -8,6 +8,7 @@ module Pacwrap
     def execute(package)
       @logger.debug "Install.execute(#{package}) called."
 
+      refresh_package_lists
       run(command(package))
     end
 
