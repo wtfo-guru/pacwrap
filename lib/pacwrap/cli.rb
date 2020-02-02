@@ -15,7 +15,7 @@ module Pacwrap
 
     desc 'file FILE', 'Displays package if any that include the FILE'
     def file(fullpathname)
-      require 'pacwrap/file'
+      require 'pacwrap/ffile'
       Pacwrap::Ffile.new(options).execute(fullpathname)
     end
 
@@ -51,5 +51,7 @@ module Pacwrap
       require 'pacwrap/find'
       Pacwrap::Find.new(options).execute(package)
     end
+
+    map search: :find
   end
 end

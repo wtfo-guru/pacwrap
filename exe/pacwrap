@@ -7,6 +7,14 @@
 require 'bundler/setup'
 require 'pacwrap/cli'
 
+###################
+# == DEV TIPS:
+#
+# For local testing run like:
+#
+#    ruby -Ilib exe/pacwrap
+#
+
 begin
   Pacwrap::CLI.start
 rescue RuntimeError => e

@@ -2,6 +2,7 @@
 
 require 'logging'
 require 'facter'
+require 'fileutils'
 
 module Pacwrap
   # @class manage
@@ -103,7 +104,7 @@ module Pacwrap
                   'sudo apt update'
                 end
       run(command)
-      File.touch(@refresh_flag)
+      FileUtils.touch(@refresh_flag)
     end
 
     def os_package_manager

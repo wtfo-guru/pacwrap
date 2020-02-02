@@ -8,13 +8,15 @@ AllCops:
   Exclude:
   - Gemfile
   - .rubocop.yml
+  - vendor/**/*
   # - attic/*
-  # - vendor/**/*
 Layout/LineLength:
   Description: People have wide screens, use them.
   Max: 200
 Style/HashSyntax:
   EnforcedStyle: hash_rockets
+  Exclude:
+  - lib/pacwrap/cli.rb
 Style/FormatString:
   Description: Prefer the % format format.
   EnforcedStyle: percent
