@@ -57,12 +57,14 @@ module Pacwrap
 
     def os_like
       case @osrelease['ID_LIKE']
-      when %r{%arch$}i
+      when %r{arch}i
         'Archlinux'
-      when %r{%debian$}i
+      when %r{debian}i
         'Debian'
-      when %r{%redhat$}i
+      when %r{redhat}i
         'RedHat'
+      else
+        warn "unrecognized ID_LIKE: " + @osrelease['ID_LIKE']
       end
     end
 
@@ -70,6 +72,7 @@ module Pacwrap
       return @osfamily if @osfamily
 
       @osrelease ||= load_properties('/etc/os-release')
+      # puts "osrelease keys: " + @osrelease.keys.inspect
       @osfamily ||= os_like if @osrelease.key?('ID_LIKE')
       @osfamily ||= os_id if @osrelease.key?('ID')
     rescue StandardError => _e

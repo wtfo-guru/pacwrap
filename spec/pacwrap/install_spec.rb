@@ -10,7 +10,7 @@ param = 'ruby'
 supported.each do |family|
   regex = case family
           when 'Archlinux'
-            "sudo pacman -Ss '#{param}'"
+            "sudo pacman -S '#{param}'"
           when 'RedHat'
             "sudo (dnf|yum) install '#{param}'"
           when 'Debian'

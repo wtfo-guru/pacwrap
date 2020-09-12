@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = 'standardizes package manage actions across various linux distrols'
   spec.homepage      = 'https://github.com/wtfo-guru/pacwrap'
   spec.license       = 'MIT'
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
+  spec.required_ruby_version = Gem::Requirement.new('>= 2.4.10')
 
   spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
 
@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'aruba'
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'bundler-geminabox'
+  spec.add_development_dependency 'ffi'
   spec.add_development_dependency 'cucumber'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rspec', '~> 3.0'

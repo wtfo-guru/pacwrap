@@ -16,7 +16,7 @@ module Pacwrap
       family = osfamily
       case family
       when 'Archlinux'
-        "sudo pacman -Ss '#{param}'"
+        "sudo pacman -S '#{param}'"
       when 'RedHat'
         pkgmgr = os_package_manager
         "sudo #{pkgmgr} install '#{param}'"
